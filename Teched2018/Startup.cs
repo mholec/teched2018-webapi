@@ -36,6 +36,7 @@ namespace Teched2018
             {
                 //options.InputFormatters.Add(new XmlSerializerInputFormatter());
                 //options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+                //options.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
             });
 
             mvc.AddJsonOptions(options =>

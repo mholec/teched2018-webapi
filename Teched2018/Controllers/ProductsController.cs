@@ -35,6 +35,7 @@ namespace Teched2018.Controllers
 	        return Ok(products);
         }
 
+        //[FormatFilter]
         [HttpGet("{id}",  Name = "GetProduct")]
         public IActionResult Get([Required]Guid id)
         {
