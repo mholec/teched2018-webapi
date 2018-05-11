@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Xml;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,8 +36,9 @@ namespace Teched2018
             var mvc = services.AddMvc(options =>
             {
                 //options.InputFormatters.Add(new XmlSerializerInputFormatter());
-                //options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
-                //options.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
+                options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
+                //options.ReturnHttpNotAcceptable = true;
             });
 
             mvc.AddJsonOptions(options =>
