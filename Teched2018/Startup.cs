@@ -36,9 +36,9 @@ namespace Teched2018
             var mvc = services.AddMvc(options =>
             {
                 //options.InputFormatters.Add(new XmlSerializerInputFormatter());
-                options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+                //options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
                 //options.OutputFormatters.Insert(0,new XmlSerializerOutputFormatter());
-                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
+                //options.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
                 //options.ReturnHttpNotAcceptable = true;
             });
 
@@ -84,10 +84,10 @@ namespace Teched2018
             //    };
             //});
 
-            //services.AddSwaggerGen(c =>
-            //{
-            //    c.SwaggerDoc("v1", new Info { Title = "GunShop API", Version = "v1" });
-            //});
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "GunShop API", Version = "v1" });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -116,11 +116,11 @@ namespace Teched2018
             //       });
             //      });
 
-            //app.UseSwagger();
-            //app.UseSwaggerUI(c =>
-            //{
-            //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "GunShop API V1");
-            //});
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "GunShop API V1");
+            });
         }
     }
 }

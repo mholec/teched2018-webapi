@@ -30,11 +30,6 @@ namespace Teched2018.ApiModels
 
 	    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
 	    {
-	        //if (Context.Products.Any(x => x.Title == Title))
-	        //{
-	        //    yield return new ValidationResult("This product already exists", new[] { "Title" });
-            //}
-
             if (Title.StartsWith("B"))
 		    {
 			    yield return new ValidationResult("Title cannot starts with B", new[] {"Title"});

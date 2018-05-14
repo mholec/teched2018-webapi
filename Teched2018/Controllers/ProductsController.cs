@@ -14,22 +14,22 @@ using Teched2018.Services;
 
 namespace Teched2018.Controllers
 {
-	//[EnableCors("Default")]
+    //[EnableCors("Default")]
     //[Produces("application/json")]
-    [Route("api/[controller]")]
     //[ApiController]
     //[ResponseCache(Duration = 1200)]
+    [Route("api/[controller]")]
     public class ProductsController : Controller
     {
 		private readonly Context _appContext;
 
 	    public ProductsController(Context appContext)
 	    {
-		    this._appContext = appContext;
+		    _appContext = appContext;
 	    }
 
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult<List<Product>> Get()
 	    {
 		    List<Product> products = _appContext.Products.Include(x => x.Tags).ToList();
 
@@ -38,7 +38,7 @@ namespace Teched2018.Controllers
 
         //[FormatFilter]
         [HttpGet("{id}",  Name = "GetProduct")]
-        public IActionResult Get([Required]Guid id)
+        public ActionResult<Product> Get([Required]Guid id)
         {
 	        Product product = _appContext.Products.Include(x => x.Tags).FirstOrDefault(x => x.ProductId == id);
 
@@ -51,7 +51,7 @@ namespace Teched2018.Controllers
 		}
 
         [HttpPost]
-        public IActionResult Post([FromQuery]Product model)
+        public ActionResult<Product> Post([FromBody]Product model)
         {
 	        if (model == null)
 	        {
@@ -75,90 +75,94 @@ namespace Teched2018.Controllers
 	        return CreatedAtRoute("GetProduct", new { id = model.ProductId }, model);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put(Guid id, [FromBody]Product model)
+        [HttpPatch("{id}")]
+        public ActionResult Patch(Guid id, [FromBody]JsonPatchDocument<Product> patchDocument)
         {
-	        var product = _appContext.Products.Find(id);
-	        if (product == null)
-	        {
-		        return NotFound();
-	        }
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
 
-	        product.Title = model.Title;
+            var product = _appContext.Products.Find(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
 
-	        try
-	        {
-		        _appContext.SaveChanges();
-	        }
-	        catch (Exception ex)
-	        {
-		        return BadRequest(ex.Message);
-	        }
+            patchDocument.ApplyTo(product);
 
-	        return Ok(model);
+            TryValidateModel(product);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _appContext.SaveChanges();
+
+            return Ok();
+        }
+
+        #region Another methods
+
+        [HttpPut("{id}")]
+        public ActionResult<Product> Put(Guid id, [FromBody]Product model)
+        {
+            var product = _appContext.Products.Find(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            product.Title = model.Title;
+
+            try
+            {
+                _appContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok(model);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public ActionResult Delete(Guid id)
         {
-	        var product = _appContext.Products.Find(id);
-	        if (product == null)
-	        {
-		        return NotFound();
-	        }
+            var product = _appContext.Products.Find(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
 
-	        _appContext.Products.Remove(product);
-	        _appContext.SaveChanges();
+            _appContext.Products.Remove(product);
+            _appContext.SaveChanges();
 
-		    return NoContent();
+            return NoContent();
         }
 
-	    [HttpPatch("{id}")]
-	    public IActionResult Patch(Guid id, [FromBody]JsonPatchDocument<Product> patchDocument)
-	    {
-		    if (patchDocument == null)
-		    {
-			    return BadRequest();
-		    }
+        [HttpGet("{id}/tags")]
+        public ActionResult<List<Tag>> GetProductTags(Guid id)
+        {
+            var product = _appContext.Products.Include(x => x.Tags).FirstOrDefault(x => x.ProductId == id);
 
-		    var product = _appContext.Products.Find(id);
-		    if (product == null)
-		    {
-			    return NotFound();
-		    }
+            if (product == null)
+            {
+                return NotFound();
+            }
 
-			patchDocument.ApplyTo(product);
+            return Ok(product.Tags);
+        }
 
-		    TryValidateModel(product);
-		    if (!ModelState.IsValid)
-		    {
-			    return BadRequest(ModelState);
-		    }
+        [HttpOptions("{id}/tags")]
+        public ActionResult GetProductTagsOptions(Guid id)
+        {
+            Response.Headers.Add("Allow",  "GET,OPTIONS");
 
-		    _appContext.SaveChanges();
+            return Ok();
+        }
 
-		    return NoContent();
-	    }
-
-		[HttpGet("{id}/tags")]
-		public IActionResult GetProductTags(Guid id)
-		{
-			var product = _appContext.Products.Include(x => x.Tags).FirstOrDefault(x => x.ProductId == id);
-
-			if (product == null)
-			{
-				return NotFound();
-			}
-
-			return Ok(product.Tags);
-		}
-
-		[HttpOptions("{id}/tags")]
-		public IActionResult GetProductTagsOptions(Guid id)
-		{
-			Response.Headers.Add("Allow",  "GET,OPTIONS");
-
-			return Ok();
-		}
+        #endregion
 	}
 }
