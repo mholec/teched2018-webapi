@@ -37,6 +37,7 @@ namespace Teched2018
             {
                 //options.InputFormatters.Add(new XmlSerializerInputFormatter());
                 options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+                //options.OutputFormatters.Insert(0,new XmlSerializerOutputFormatter());
                 options.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
                 //options.ReturnHttpNotAcceptable = true;
             });
@@ -47,7 +48,7 @@ namespace Teched2018
                 //{
                 //    options.SerializerSettings.ContractResolver = new DefaultContractResolver()
                 //    {
-                //        NamingStrategy = new DefaultNamingStrategy()
+                //        NamingStrategy = new DefaultNamingStrategy(),
                 //    };
                 //}
             });
@@ -60,7 +61,7 @@ namespace Teched2018
                 //});
             });
 
-            //services.AddHttpCacheHeaders();
+            services.AddResponseCaching();
 
             mvc.SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -95,6 +96,8 @@ namespace Teched2018
             loggerFactory.AddDebug();
 
             app.UseStaticFiles();
+
+            app.UseResponseCaching();
 
             app.UseMvc();
 

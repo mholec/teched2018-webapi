@@ -16,8 +16,9 @@ namespace Teched2018.Controllers
 {
 	//[EnableCors("Default")]
     //[Produces("application/json")]
-    [Route("api/products")]
-    [ApiController]
+    [Route("api/[controller]")]
+    //[ApiController]
+    //[ResponseCache(Duration = 1200)]
     public class ProductsController : Controller
     {
 		private readonly Context _appContext;
@@ -27,7 +28,7 @@ namespace Teched2018.Controllers
 		    this._appContext = appContext;
 	    }
 
-	    [HttpGet]
+        [HttpGet]
         public IActionResult Get()
 	    {
 		    List<Product> products = _appContext.Products.Include(x => x.Tags).ToList();
@@ -50,7 +51,7 @@ namespace Teched2018.Controllers
 		}
 
         [HttpPost]
-        public IActionResult Post([FromBody]Product model)
+        public IActionResult Post([FromQuery]Product model)
         {
 	        if (model == null)
 	        {
