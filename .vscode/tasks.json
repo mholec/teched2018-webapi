@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Teched2018/Teched2018.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}

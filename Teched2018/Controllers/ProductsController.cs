@@ -16,7 +16,7 @@ namespace Teched2018.Controllers
 {
     //[EnableCors("Default")]
     //[Produces("application/json")]
-    //[ApiController]
+    [ApiController]
     //[ResponseCache(Duration = 1200)]
     [Route("api/[controller]")]
     public class ProductsController : Controller
@@ -38,7 +38,7 @@ namespace Teched2018.Controllers
 
         //[FormatFilter]
         [HttpGet("{id}",  Name = "GetProduct")]
-        public ActionResult<Product> Get([Required]Guid id)
+        public ActionResult<Product> Get(Guid id, /*[Required]*/string test)
         {
 	        Product product = _appContext.Products.Include(x => x.Tags).FirstOrDefault(x => x.ProductId == id);
 
